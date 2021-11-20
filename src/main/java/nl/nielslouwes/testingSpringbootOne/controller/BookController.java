@@ -15,23 +15,6 @@ import java.util.List;
 @RestController
 public class BookController {
 
-    //attribute
-    private List<Book> books = new ArrayList<>();
-
-    //constructor - create the arrayList with preloaded names
-    public BookController() {
-        Book book1 = new Book();
-        book1.setTitle("Harry Potter");
-        book1.setAuthor("J.K Rowling");
-        book1.setIsbn("930912901");
-        books.add(book1);
-
-        Book book2 = new Book();
-        book2.setTitle("Harry Potter: Sorcerer's Stone");
-        book2.setAuthor("J.K Rowling");
-        book2.setIsbn("930912871");
-        books.add(book2);
-    }
     @Autowired
     private BookRepository bookRepository;
 
@@ -59,24 +42,18 @@ public class BookController {
     //CREATE NEW BOOK
     @PostMapping(value = "/books")
     public ResponseEntity<Object> addBook(@RequestBody Book book) {
-        books.add(book);
-        int newId = books.size() - 1;
+       Book newBook = bookRepository.save(book);
+       int newId = book.getId();
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newId).toUri();
-        return ResponseEntity.created(location).build();
+       URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newId).toUri();
+       return ResponseEntity.created(location).build();
     };
 
     //PUT - Update existing book -ENTIRE THING
     @PutMapping(value = "/books/{id}")
     public ResponseEntity<Object> updateBook(@PathVariable int id, @RequestBody Book book) {
-        books.set(id, book);
-        return ResponseEntity.noContent().build();
-    };
+        Book existingBook = bookRepository.findById(id).orElse(null);
 
-    //PATCH - Update part of existing book
-    @PatchMapping(value = "/books/{id}")
-    public ResponseEntity<Object> partialUpdateBook(@PathVariable int id, @RequestBody Book book) {
-        Book existingBook = books.get(id);
         if (!book.getTitle().isEmpty()) {
             existingBook.setTitle(book.getTitle());
         }
@@ -86,7 +63,25 @@ public class BookController {
         if (!book.getIsbn().isEmpty()) {
             existingBook.setIsbn(book.getTitle());
         }
-        books.set(id, book);
+        bookRepository.save(existingBook);
+        return ResponseEntity.noContent().build();
+    };
+
+    //PATCH - Update part of existing book
+    @PatchMapping(value = "/books/{id}")
+    public ResponseEntity<Object> partialUpdateBook(@PathVariable int id, @RequestBody Book book) {
+        Book existingBook = bookRepository.findById(id).orElse(null);
+
+        if (!(book.getTitle() == null) && !book.getTitle().isEmpty()) {
+            existingBook.setTitle(book.getTitle());
+        }
+        if (!(book.getAuthor() == null ) && !book.getAuthor().isEmpty()) {
+            existingBook.setAuthor(book.getAuthor());
+        }
+        if (!(book.getIsbn() == null) && !book.getIsbn().isEmpty()) {
+            existingBook.setIsbn(book.getTitle());
+        }
+        bookRepository.save(existingBook);
         return ResponseEntity.noContent().build();
     };
 }

@@ -15,6 +15,24 @@ public class Book {
     private String isbn;
 
     //constructor - not needed
+    //Springboot has a default contructor
+
+    public Book () {};
+
+    //Book constructor with all fields but ID
+    public Book(String title, String author, String isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
+
+    //Book constructor with all fields
+    public Book(int id, String title, String author, String isbn) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+    }
 
     public int getId() {
         return id;
