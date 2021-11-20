@@ -1,13 +1,28 @@
 package nl.nielslouwes.testingSpringbootOne.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "books")
 public class Book {
     //attributes
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String title;
     private String author;
     private String isbn;
 
     //constructor - not needed
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
