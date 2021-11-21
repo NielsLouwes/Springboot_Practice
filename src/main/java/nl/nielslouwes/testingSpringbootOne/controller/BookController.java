@@ -2,6 +2,7 @@ package nl.nielslouwes.testingSpringbootOne.controller;
 
 import nl.nielslouwes.testingSpringbootOne.model.Book;
 import nl.nielslouwes.testingSpringbootOne.repository.BookRepository;
+import nl.nielslouwes.testingSpringbootOne.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,72 +17,51 @@ import java.util.List;
 public class BookController {
 
     @Autowired
-    private BookRepository bookRepository;
+    private BookService bookService;
 
     //responseEntity is another way of writing mapping
     //returns an entity.statuscode(gives us books)
     //GET all books
     @GetMapping(value = "/books")
     public ResponseEntity<Object> getBooks() {
-        return ResponseEntity.ok(bookRepository.findAll());
+        return ResponseEntity.ok(bookService.getBooks());
     };
 
     //Get single book
     @GetMapping(value = "/books/{id}")
     public ResponseEntity<Object> getBook(@PathVariable("id") int id) {
-        return ResponseEntity.ok(bookRepository.findById(id));
+        return ResponseEntity.ok(bookService.getBook(id));
     };
 
     //DELETE single book
     @DeleteMapping(value = "/books/{id}")
     public ResponseEntity<Object> deleteBook(@PathVariable("id") int id) {
-        bookRepository.deleteById(id);
+        bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     };
 
     //CREATE NEW BOOK
     @PostMapping(value = "/books")
     public ResponseEntity<Object> addBook(@RequestBody Book book) {
-       Book newBook = bookRepository.save(book);
-       int newId = book.getId();
+       int newId = bookService.addBook(book);
 
        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newId).toUri();
        return ResponseEntity.created(location).build();
     };
 
-    //PUT - Update existing book -ENTIRE THING
+    //PUT - Update existing book - ENTIRE THING
     @PutMapping(value = "/books/{id}")
     public ResponseEntity<Object> updateBook(@PathVariable int id, @RequestBody Book book) {
-        Book existingBook = bookRepository.findById(id).orElse(null);
+        bookService.updateBook(id, book);
 
-        if (!book.getTitle().isEmpty()) {
-            existingBook.setTitle(book.getTitle());
-        }
-        if (!book.getAuthor().isEmpty()) {
-            existingBook.setAuthor(book.getAuthor());
-        }
-        if (!book.getIsbn().isEmpty()) {
-            existingBook.setIsbn(book.getTitle());
-        }
-        bookRepository.save(existingBook);
         return ResponseEntity.noContent().build();
     };
 
     //PATCH - Update part of existing book
     @PatchMapping(value = "/books/{id}")
     public ResponseEntity<Object> partialUpdateBook(@PathVariable int id, @RequestBody Book book) {
-        Book existingBook = bookRepository.findById(id).orElse(null);
+        bookService.partialUpdateBook(id, book);
 
-        if (!(book.getTitle() == null) && !book.getTitle().isEmpty()) {
-            existingBook.setTitle(book.getTitle());
-        }
-        if (!(book.getAuthor() == null ) && !book.getAuthor().isEmpty()) {
-            existingBook.setAuthor(book.getAuthor());
-        }
-        if (!(book.getIsbn() == null) && !book.getIsbn().isEmpty()) {
-            existingBook.setIsbn(book.getTitle());
-        }
-        bookRepository.save(existingBook);
         return ResponseEntity.noContent().build();
     };
 }
