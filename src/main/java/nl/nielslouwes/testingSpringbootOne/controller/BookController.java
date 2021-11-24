@@ -23,8 +23,8 @@ public class BookController {
     //returns an entity.statuscode(gives us books)
     //GET all books
     @GetMapping(value = "/books")
-    public ResponseEntity<Object> getBooks() {
-        return ResponseEntity.ok(bookService.getBooks());
+    public ResponseEntity<Object> getBooks(@RequestParam(value = "title", defaultValue = "") String title) {
+        return ResponseEntity.ok(bookService.getBooks(title));
     };
 
     //Get single book

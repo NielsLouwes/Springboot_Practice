@@ -1,25 +1,42 @@
 package nl.nielslouwes.testingSpringbootOne.service;
 
 
+import nl.nielslouwes.testingSpringbootOne.exception.RecordNotFoundException;
 import nl.nielslouwes.testingSpringbootOne.model.Book;
 import nl.nielslouwes.testingSpringbootOne.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
-    //add methods that you also use in your controller
 
-    public Iterable<Book> getBooks() {
-        return bookRepository.findAll();
+    //return all books or book based on title
+    public Iterable<Book> getBooks(String title) {
+        if (title.isEmpty()) {
+            return bookRepository.findAll();
+        }
+        else {
+            return bookRepository.findAllByTitleContainingIgnoreCase(title);
+        }
     }
 
+
+
     public Book getBook(int id) {
-        return bookRepository.findById(id).orElse(null);
+        Optional<Book> optionalBook = bookRepository.findById(id);
+
+        if (optionalBook.isPresent()) {
+            return optionalBook.get();
+        } else {
+            // exception of case when book doesn't exist
+            throw new RecordNotFoundException("ID does not exist!");
+        }
     }
 
     public void deleteBook(int id) {
