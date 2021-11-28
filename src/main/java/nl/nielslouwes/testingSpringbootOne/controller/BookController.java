@@ -1,5 +1,6 @@
 package nl.nielslouwes.testingSpringbootOne.controller;
 
+import nl.nielslouwes.testingSpringbootOne.dto.BookRequestDto;
 import nl.nielslouwes.testingSpringbootOne.model.Book;
 import nl.nielslouwes.testingSpringbootOne.repository.BookRepository;
 import nl.nielslouwes.testingSpringbootOne.service.BookService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.Servlet;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +44,8 @@ public class BookController {
 
     //CREATE NEW BOOK
     @PostMapping(value = "/books")
-    public ResponseEntity<Object> addBook(@RequestBody Book book) {
-       int newId = bookService.addBook(book);
+    public ResponseEntity<Object> addBook(@Valid @RequestBody BookRequestDto bookRequestDto) {
+       int newId = bookService.addBook(bookRequestDto);
 
        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newId).toUri();
        return ResponseEntity.created(location).build();

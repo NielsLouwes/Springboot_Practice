@@ -1,6 +1,8 @@
 package nl.nielslouwes.testingSpringbootOne.service;
 
 
+import nl.nielslouwes.testingSpringbootOne.dto.BookRequestDto;
+import nl.nielslouwes.testingSpringbootOne.exception.BadRequestException;
 import nl.nielslouwes.testingSpringbootOne.exception.RecordNotFoundException;
 import nl.nielslouwes.testingSpringbootOne.model.Book;
 import nl.nielslouwes.testingSpringbootOne.repository.BookRepository;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,8 +29,6 @@ public class BookService {
         }
     }
 
-
-
     public Book getBook(int id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
 
@@ -43,10 +44,21 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    public int addBook(Book book) {
+    public int addBook(BookRequestDto bookRequestDto) {
+
+        String isbn = bookRequestDto.getIsbn();
+        List<Book> books = (List<Book>)bookRepository.findAllByIsbn(isbn);
+        if (books.size() > 0) {
+            throw new BadRequestException("Isbn already exists!!!");
+        }
+
+        Book book = new Book();
+        book.setAuthor(bookRequestDto.getAuthor());
+        book.setTitle(bookRequestDto.getTitle());
+        book.setIsbn(bookRequestDto.getIsbn());
+
         Book newBook = bookRepository.save(book);
         return newBook.getId();
-
     }
 
     public void updateBook(int id, Book book) {
