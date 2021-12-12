@@ -1,5 +1,6 @@
 package nl.nielslouwes.testingSpringbootOne.controller;
 
+import nl.nielslouwes.testingSpringbootOne.model.Book;
 import nl.nielslouwes.testingSpringbootOne.model.Person;
 import nl.nielslouwes.testingSpringbootOne.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,16 @@ public class PersonController {
 
         return ResponseEntity.created(location).build();
     }
+
+//    //return which books a Person has
+//    @GetMapping(value = "/persons/{id}/books")
+//    public ResponseEntity<Object> getPersonBooks(@PathVariable int id) {
+//        return ResponseEntity.ok(personService.getPersonBooks(id));
+//    }
+//
+//    @PostMapping(value = "/persons/{id}/books")
+//    public ResponseEntity<Object> addPersonBook(@PathVariable int id, @RequestBody Book book) {
+//        return ResponseEntity.ok(personService.addPersonBook(id, book));
+//    }
 }
 

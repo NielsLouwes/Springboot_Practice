@@ -15,6 +15,9 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private PersonRepository bookRepository;
+
     public Iterable<Person> getPersons(String title) {
         return personRepository.findAll();
     }
@@ -28,7 +31,6 @@ public class PersonService {
         else {
             throw new RecordNotFoundException("ID does not exist!!!");
         }
-
     }
 
     public void deletePerson(int id) {
